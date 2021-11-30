@@ -1,0 +1,13 @@
+[package]
+name = "example-skill"
+version = "0.1.0"
+authors = ["Åke Forslund <ake.forslund@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+futures-channel = "*"
+serde_json = "1.0.64"
+tokio = { version = "1.8.0", features = ["full"] }
+tokio-tungstenite = "*"
+
+rustcroft = {git = "https://github.com/forslund/rustcroft", branch = "main"}

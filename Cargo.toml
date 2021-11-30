@@ -1,0 +1,17 @@
+[package]
+name = "rustcroft"
+version = "0.1.0"
+authors = ["Åke Forslund <ake.forslund@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.8.0", features = ["full"] }
+tokio-tungstenite = "*"
+tungstenite = "*"
+futures-channel = "*"
+futures-util = "*"
+url = "*"
+serde_json = "1.0.64"
+serde = {version = "1.0.130", features = ["derive"]}
