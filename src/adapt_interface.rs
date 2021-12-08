@@ -10,6 +10,7 @@ pub struct AdaptIntent {
 
 impl AdaptIntent {
     #[allow(dead_code)]
+    /// Create a new Adapt intent
     pub fn new (name: &str) -> AdaptIntent {
         AdaptIntent {
             name: name.to_string(),
@@ -20,12 +21,14 @@ impl AdaptIntent {
     }
 
     #[allow(dead_code)]
+    /// Add a required keyword
     pub fn requiring(mut self, keyword: &str) -> AdaptIntent {
         self.requires.push(vec![keyword.to_string(), keyword.to_string()]);
         self
     }
 
     #[allow(dead_code)]
+    /// Add an optional keyword
     pub fn optionally(mut self, keyword: &str) -> AdaptIntent {
         self.optional.push(vec![keyword.to_string(), keyword.to_string()]);
         self
@@ -45,18 +48,3 @@ pub struct AdaptKeywordAlias {
     end: String,
     alias_of: String
 }
-
-/*
-register_adapt_keyword(&ws_writer,
-                       vocab_type: String,
-                       entity: String,
-                       aliases=Optional<Vec<String>>) {
-
-}
-
-register_adapt_intent(&ws_writer,
-                       name: String,
-                       intent: AdaptIntent) {
-
-}
-*/

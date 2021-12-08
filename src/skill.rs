@@ -61,6 +61,7 @@ impl EventHandler {
     }
 
     #[allow(dead_code)]
+    /// Create a new event handler
     pub fn new() -> EventHandler {
         EventHandler{ handlers: HashMap::new() }
     }
@@ -76,6 +77,7 @@ pub struct Skill {
 
 impl Skill {
     #[allow(dead_code)]
+    /// Create a new Skill struct
     pub fn new() -> Skill {
         Skill {
             handlers: EventHandler::new(),
@@ -86,6 +88,7 @@ impl Skill {
 }
 
 
+/// Register intents and connect the skill to the message bus
 pub async fn start_skill(mut skill_setup: Skill) {
     let (bus_tx, bus_rx) = futures_channel::mpsc::unbounded();
 

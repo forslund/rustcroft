@@ -9,6 +9,7 @@ pub struct MycroftMessage {
 
 impl MycroftMessage {
     #[allow(dead_code)]
+    /// Create a new Message for the mycroft bus
     pub fn new(msg_type: &str) -> MycroftMessage {
         MycroftMessage {
             msg_type: msg_type.to_string(),
@@ -18,12 +19,14 @@ impl MycroftMessage {
     }
 
     #[allow(dead_code)]
+    /// Set the messages data
     pub fn with_data(mut self, data_obj: Value) -> MycroftMessage{
         self.data = data_obj;
         self
     }
     
     #[allow(dead_code)]
+    /// serialize to string
     pub fn to_string(self) -> String {
         format!("{{\"type\":\"{}\",\"data\":{},\"context\":{}}}",
                 self.msg_type,
@@ -33,6 +36,7 @@ impl MycroftMessage {
     }
 
     #[allow(dead_code)]
+    /// Convert to tungstenite Message
     pub fn to_message(self) -> Message {
         let string_repr = self.to_string();
         Message::text(string_repr)
