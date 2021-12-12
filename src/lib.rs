@@ -1,6 +1,7 @@
 mod adapt_interface;
 mod mycroft_message;
 pub mod skill;
+pub mod config;
 
 pub use mycroft_message::MycroftMessage;
 pub use adapt_interface::{AdaptKeyword, AdaptIntent};
