@@ -5,17 +5,22 @@ use std::io;
 
 use serde_json::{Result, Value};
 
-/// Read mycroft config json removing any comment lines.
-fn read_config(path: &Path) -> io::Result<String> {
-    let s = read_to_string(path)?;
+fn remove_comments(config_string: String) -> String {
     let mut ret_val = String::new();
-    for line in s.split('\n') {
+    for line in config_string.split('\n') {
         if !line.trim().starts_with("//") {
             ret_val.push_str(line);
             ret_val.push('\n');
         }
     }
-    Ok(ret_val)
+    ret_val
+}
+
+
+/// Read mycroft config json removing any comment lines.
+fn read_config(path: &Path) -> io::Result<String> {
+    let file_contents = read_to_string(path)?;
+    Ok(remove_comments(file_contents))
 }
 
 
@@ -26,7 +31,6 @@ pub fn load(path: &Path) -> Result<Value> {
     let config: Value = serde_json::from_str(read_data.as_str())?;
     Ok(config)
 }
-
 
 pub struct ConfigStack {
     #[allow(dead_code)]
@@ -76,4 +80,10 @@ impl ConfigStack {
         }
         Err("Key not found")
     }
+}
+
+pub fn load_default() -> Result<Value>{
+    let default_config_file = include_str!("../resources/mycroft.conf");
+    serde_json::from_str(
+        remove_comments(String::from(default_config_file)).as_str())
 }
