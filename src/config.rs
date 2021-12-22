@@ -5,6 +5,9 @@ use std::io;
 
 use serde_json::{Result, Value};
 
+extern crate xdg;
+
+
 fn remove_comments(config_string: String) -> String {
     let mut ret_val = String::new();
     for line in config_string.split('\n') {
@@ -32,6 +35,15 @@ pub fn load(path: &Path) -> Result<Value> {
     Ok(config)
 }
 
+
+/// Load mycroft conig shipped with rustcroft
+pub fn load_default() -> Result<Value>{
+    let default_config_file = include_str!("../resources/mycroft.conf");
+    serde_json::from_str(
+        remove_comments(String::from(default_config_file)).as_str())
+}
+
+
 pub struct ConfigStack {
     #[allow(dead_code)]
     files: Vec<String>,
@@ -51,6 +63,34 @@ impl ConfigStack {
         }
         Ok(ConfigStack {files: path_vec, configs: config_vec})
     }
+
+    /// Create config stack from Vector of paths
+    pub fn from_vec(config_paths: &Vec<String>) -> Result<ConfigStack> {
+        let mut path_vec = Vec::<String>::new();
+        let mut config_vec = Vec::<Value>::new();
+        for config in config_paths {
+            path_vec.push(config.clone());
+            config_vec.push(load(Path::new(config.as_str())).unwrap());
+        }
+        Ok(ConfigStack {files: path_vec, configs: config_vec})
+    }
+
+    /// Create config stack from default config files (XDG locations)
+    /// and the config packed with the rustcroft library
+    pub fn from_default() -> Result<ConfigStack> {
+    let xdg_dirs = xdg::BaseDirectories::with_prefix("mycroft").unwrap();
+    let mut config_paths = Vec::<String>::new();
+    for conf in xdg_dirs.find_config_files("mycroft.conf") {
+        println!("{}", conf.as_path().display().to_string());
+        let conf_string = conf.as_path().display().to_string();
+        config_paths.push(conf_string);
+    }
+    let mut stack = ConfigStack::from_vec(&config_paths)?;
+    // Add default config provided by rustcroft
+    stack.files.push(String::from("default"));
+    stack.configs.push(load_default().unwrap());
+    Ok(stack)
+}
 
     #[allow(dead_code)]
     /// Get a value from the first config that has a matching value
@@ -80,10 +120,4 @@ impl ConfigStack {
         }
         Err("Key not found")
     }
-}
-
-pub fn load_default() -> Result<Value>{
-    let default_config_file = include_str!("../resources/mycroft.conf");
-    serde_json::from_str(
-        remove_comments(String::from(default_config_file)).as_str())
 }
