@@ -36,7 +36,7 @@ pub fn load(path: &Path) -> Result<Value> {
 }
 
 
-/// Load mycroft conig shipped with rustcroft
+/// Load mycroft config shipped with rustcroft
 pub fn load_default() -> Result<Value>{
     let default_config_file = include_str!("../resources/mycroft.conf");
     serde_json::from_str(

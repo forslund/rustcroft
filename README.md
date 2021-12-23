@@ -35,4 +35,4 @@ be done:
 
 ## Please note
 
-I (Åke, the author of this) has very little experience with Rust, and so far this has been a huge learining experience. The quality of this library should not be taken as an indication of the quality of the Mycroft Virual Assistant, any faults are likely mine.
+I (Åke, the author of this) has very little experience with Rust, and so far this has been a huge learining experience. The quality of this library should not be taken as an indication of the quality of the Mycroft Virtual Assistant, any faults are likely mine.
