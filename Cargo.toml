@@ -16,3 +16,6 @@ url = "*"
 serde_json = "1.0.64"
 serde = {version = "1.0.130", features = ["derive"]}
 xdg = "^2.1"
+regex = "*"
+rand = "*"
+glob = "*"

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use tokio_tungstenite::tungstenite::protocol::Message;
 use futures_channel::mpsc::UnboundedSender;
 
@@ -5,6 +7,7 @@ use rustcroft::MycroftMessage;
 
 use rustcroft::{AdaptIntent, AdaptKeyword};
 use rustcroft::skill::{Skill, Speak, start_skill};
+use rustcroft::dialog;
 
 
 ///Print all utterances spoken by Mycroft
@@ -23,7 +26,12 @@ fn speak(bus_tx: &UnboundedSender<Message>, utterance: &str) {
 ///Handler for when the user says hello to rust
 fn greet_intent_handler(_: serde_json::Value,
                         bus_tx: &UnboundedSender<Message>) {
-    speak(bus_tx, "hello from rust")
+    // TODO: A macro for the DialogData creation is needed and a speak_dialog
+    //       helper would be nice.
+    let dialogs = dialog::DialogCollection::from_folder("dialog", "en-us");
+    let mut dialog_data: dialog::DialogData = HashMap::new();
+    dialog_data.insert("thing".to_string(), "rust".to_string());
+    speak(bus_tx, dialogs.get("hello", &dialog_data).unwrap().as_str())
 }
 
 ///Handler for when the user says good bye to rust
