@@ -1,5 +1,5 @@
 mod adapt_interface;
-mod mycroft_message;
+pub mod mycroft_message;
 pub mod skill;
 pub mod config;
 pub mod dialog;

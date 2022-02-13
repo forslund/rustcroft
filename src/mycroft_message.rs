@@ -1,6 +1,16 @@
 use serde_json::{Value};
 use tokio_tungstenite::tungstenite::protocol::Message;
 
+
+#[allow(dead_code)]
+/// Create a response message type from the original
+pub fn build_response_type<S: AsRef<str>>(original_msg_type: S) -> String {
+    let str_ref = original_msg_type.as_ref();
+    println!("{}.response", str_ref);
+    format!("{}.response", str_ref)
+}
+
+
 pub struct MycroftMessage {
 	msg_type: String,
 	data: Value,
@@ -15,6 +25,17 @@ impl MycroftMessage {
             msg_type: msg_type.to_string(),
             data: serde_json::json!({}),
             context: serde_json::json!({}),
+        }
+    }
+
+    #[allow(dead_code)]
+    /// Create a response Message based on this message.
+    pub fn response(self) -> MycroftMessage {
+        let response_type = build_response_type(self.msg_type);
+        MycroftMessage {
+            msg_type: response_type,
+            data: serde_json::json!({}),
+            context: self.context,
         }
     }
 
