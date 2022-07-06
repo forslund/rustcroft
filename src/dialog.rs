@@ -37,9 +37,15 @@ struct Dialog {
     dialog_strings: Vec<String>
 }
 
+impl From<&Path> for Dialog {
+    fn from(dialog_path: &Path) -> Self {
+        Dialog::from_path(dialog_path)
+    }
+}
+
 impl Dialog {
     #[allow(dead_code)]
-    pub fn from_path(dialog_path: &Path) -> Dialog {
+    pub fn from_path(dialog_path: &Path) -> Self {
         let mut dialog = Dialog { dialog_strings: Vec::<String>::new() };
         if let Ok(lines) = read_lines(dialog_path) {
             for line in lines {
@@ -71,9 +77,39 @@ pub struct DialogCollection {
     dialogs: HashMap<String, Dialog>
 }
 
+impl From<&str> for DialogCollection {
+    fn from(folder: &str) -> Self {
+        DialogCollection::from(Path::new(folder))
+    }
+}
+
+impl From<&Path> for DialogCollection {
+    fn from(folder: &Path) -> Self {
+        let mut collection = DialogCollection {
+            dialogs: HashMap::<String, Dialog>::new()
+        };
+        // Get all files in folder ending with .dialog
+        let dialog_files = glob(folder.to_str().unwrap()).unwrap();
+        for dialog_file_path in dialog_files {
+            match dialog_file_path {
+                Ok(path) => {
+                    let p = Path::new(&path);
+                    let key = String::from(
+                        p.file_stem().unwrap().to_str().unwrap()
+                    );
+                    collection.dialogs.insert(key,
+                                              Dialog::from(p));
+                    },
+                Err(e) => println!("{:?}", e),
+            }
+        }
+        collection
+    }
+}
+
 impl DialogCollection {
     #[allow(dead_code)]
-    pub fn from_folder(path: &str, lang: &str) -> DialogCollection {
+    pub fn from_folder(path: &str, lang: &str) -> Self {
         let mut collection = DialogCollection {
             dialogs: HashMap::<String, Dialog>::new()
         };
@@ -88,7 +124,7 @@ impl DialogCollection {
                         p.file_stem().unwrap().to_str().unwrap()
                     );
                     collection.dialogs.insert(key,
-                                              Dialog::from_path(p));
+                                              Dialog::from(p));
                     },
                 Err(e) => println!("{:?}", e),
             }

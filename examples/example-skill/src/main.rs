@@ -7,7 +7,7 @@ use rustcroft::MycroftMessage;
 
 use rustcroft::{AdaptIntent, AdaptKeyword};
 use rustcroft::skill::{Skill, Speak, start_skill};
-use rustcroft::dialog;
+use rustcroft::dialog::{DialogCollection, DialogData};
 
 
 ///Print all utterances spoken by Mycroft
@@ -28,8 +28,9 @@ fn greet_intent_handler(_: serde_json::Value,
                         bus_tx: &UnboundedSender<Message>) {
     // TODO: A macro for the DialogData creation is needed and a speak_dialog
     //       helper would be nice.
-    let dialogs = dialog::DialogCollection::from_folder("dialog", "en-us");
-    let mut dialog_data: dialog::DialogData = HashMap::new();
+    let dialogs = DialogCollection::from("dialog/en-us");
+    let mut dialog_data: DialogData = HashMap::new();
+
     dialog_data.insert("thing".to_string(), "rust".to_string());
     speak(bus_tx, dialogs.get("hello", &dialog_data).unwrap().as_str())
 }
