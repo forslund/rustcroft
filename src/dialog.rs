@@ -1,4 +1,3 @@
-
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -105,6 +104,21 @@ impl DialogCollection {
             None => None
         }
     }
-
-            
 }
+
+#[macro_export]
+macro_rules! dialog_data{
+    ($list:expr) => {
+        {
+            let mut data = HashMap::new();
+            for keyval in $list.iter() {
+                data.insert(String::from((*keyval).0),
+                            String::from((*keyval).1));
+            }
+            data
+        }
+    }
+}
+
+
+
