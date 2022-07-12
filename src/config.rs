@@ -44,12 +44,43 @@ pub fn load_default() -> Result<Value>{
 }
 
 
+pub fn default_config_paths() -> Vec<String> {
+    let xdg_dirs = xdg::BaseDirectories::with_prefix("mycroft").unwrap();
+    let mut config_paths = Vec::<String>::new();
+    for conf in xdg_dirs.find_config_files("mycroft.conf") {
+        println!("{}", conf.as_path().display().to_string());
+        let conf_string = conf.as_path().display().to_string();
+        config_paths.push(conf_string);
+    }
+    config_paths
+}
+
+
 pub struct ConfigStack {
     #[allow(dead_code)]
     files: Vec<String>,
     #[allow(dead_code)]
     configs: Vec<Value>
 }
+
+impl From<&[&str]> for ConfigStack {
+    fn from(config_paths: &[&str]) -> ConfigStack {
+        ConfigStack::from_slice(config_paths).unwrap()
+    }
+}
+
+impl From<&Vec<String>> for ConfigStack {
+    fn from(config_paths: &Vec<String>) -> ConfigStack {
+        ConfigStack::from_vec(config_paths).unwrap()
+    }
+}
+
+impl From<Vec<String>> for ConfigStack {
+    fn from(config_paths: Vec<String>) -> ConfigStack {
+        ConfigStack::from_vec(&config_paths).unwrap()
+    }
+}
+
 
 impl ConfigStack {
     #[allow(dead_code)]
@@ -78,19 +109,13 @@ impl ConfigStack {
     /// Create config stack from default config files (XDG locations)
     /// and the config packed with the rustcroft library
     pub fn from_default() -> Result<ConfigStack> {
-    let xdg_dirs = xdg::BaseDirectories::with_prefix("mycroft").unwrap();
-    let mut config_paths = Vec::<String>::new();
-    for conf in xdg_dirs.find_config_files("mycroft.conf") {
-        println!("{}", conf.as_path().display().to_string());
-        let conf_string = conf.as_path().display().to_string();
-        config_paths.push(conf_string);
+        let config_paths = default_config_paths();
+        let mut stack = ConfigStack::from(&config_paths);
+        // Add default config provided by rustcroft
+        stack.files.push(String::from("default"));
+        stack.configs.push(load_default().unwrap());
+        Ok(stack)
     }
-    let mut stack = ConfigStack::from_vec(&config_paths)?;
-    // Add default config provided by rustcroft
-    stack.files.push(String::from("default"));
-    stack.configs.push(load_default().unwrap());
-    Ok(stack)
-}
 
     #[allow(dead_code)]
     /// Get a value from the first config that has a matching value
