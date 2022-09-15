@@ -19,3 +19,4 @@ xdg = "^2.1"
 regex = "*"
 rand = "*"
 glob = "*"
+reqwest = { version = "0.11.11", features = ["native-tls", "blocking", "json"] }

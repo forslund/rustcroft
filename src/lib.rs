@@ -3,6 +3,7 @@ pub mod mycroft_message;
 pub mod skill;
 pub mod config;
 pub mod dialog;
+pub mod identity;
 
 #[cfg(test)]
 mod test;
