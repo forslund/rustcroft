@@ -24,6 +24,11 @@ pub struct EventHandler {
     handlers: HashMap<String, MsgHandler>
 }
 
+impl Default for EventHandler {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl EventHandler {
     #[allow(dead_code)]
@@ -35,7 +40,7 @@ impl EventHandler {
     #[allow(dead_code)]
     pub fn call(&self, name: &String, msg: serde_json::Value, bus_tx: &UnboundedSender<Message>) {
         match self.handlers.get(name) {
-            Some(handler) => handler(msg, &bus_tx),
+            Some(handler) => handler(msg, bus_tx),
             None => ()
         }
     }
@@ -55,8 +60,8 @@ impl EventHandler {
     pub async fn handle_msg(&self, bus_tx: &UnboundedSender<Message>,
                         data: Vec<u8>) -> serde_json::Result<()> {
         let s = std::str::from_utf8(&data).unwrap();
-        let msg: Value = serde_json::from_str(&s)?;
-        self.call(&msg["type"].to_string(), msg, &bus_tx);
+        let msg: Value = serde_json::from_str(s)?;
+        self.call(&msg["type"].to_string(), msg, bus_tx);
         Ok(())
     }
 
@@ -73,6 +78,12 @@ pub struct Skill {
    pub intents: Vec<(AdaptIntent, MsgHandler)>,
    pub keywords: Vec::<AdaptKeyword>,
    pub handlers: EventHandler
+}
+
+impl Default for Skill {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Skill {
@@ -102,7 +113,7 @@ pub async fn start_skill(mut skill_setup: Skill) {
     
     for (intent, handler) in skill_setup.intents.iter() {
         skill_setup.handlers.add_adapt_handler(&bus_tx,
-                                               intent.clone(),
+                                               &intent.clone(),
                                                *handler);
     }
     

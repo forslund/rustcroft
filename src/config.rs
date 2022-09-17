@@ -30,7 +30,7 @@ fn read_config(path: &Path) -> io::Result<String> {
 /// Load mycroft configuration file from provided path
 #[allow(dead_code)]
 pub fn load(path: &Path) -> Result<Value> {
-    let read_data = read_config(&path).unwrap();
+    let read_data = read_config(path).unwrap();
     let config: Value = serde_json::from_str(read_data.as_str())?;
     Ok(config)
 }
@@ -48,7 +48,7 @@ pub fn default_config_paths() -> Vec<String> {
     let xdg_dirs = xdg::BaseDirectories::with_prefix("mycroft").unwrap();
     let mut config_paths = Vec::<String>::new();
     for conf in xdg_dirs.find_config_files("mycroft.conf") {
-        println!("{}", conf.as_path().display().to_string());
+        println!("{}", conf.as_path().display());
         let conf_string = conf.as_path().display().to_string();
         config_paths.push(conf_string);
     }
@@ -129,7 +129,7 @@ impl ConfigStack {
             for key in key_sequence.iter() {
                 found = true;
                 match field.get(key) {
-                    Some(res) => field = &res,
+                    Some(res) => field = res,
                     _ => found = false
                 }
 

@@ -14,8 +14,8 @@ pub type DialogData = HashMap<String, String>;
 //let DialogCache = HashMap<String, DialogData>;
 
 #[allow(dead_code)]
-fn render(dialog: &String, data: &DialogData) -> String {
-    let mut result = dialog.clone();
+fn render(dialog: &str, data: &DialogData) -> String {
+    let mut result = dialog.to_owned();
     for (key, value) in data {
         let replace_regex = regex::Regex::new(
                                 format!(r"\{{{}\}}", key).as_str()
@@ -47,7 +47,9 @@ impl Dialog {
                     dialog.dialog_strings.push(
                         String::from(dialog_line.trim())
                     );
-                };
+                } else {
+                    println!("Couldn't parse line {:?}", line);
+                }
             }
         }
         dialog
@@ -99,10 +101,9 @@ impl DialogCollection {
     #[allow(dead_code)]
     pub fn get(self: &DialogCollection, dialog: &str, data: &DialogData)
             -> Option<String> {
-        match self.dialogs.get(dialog) {
-            Some(dialog_set) => Some(dialog_set.get(data).unwrap()),
-            None => None
-        }
+        self.dialogs.get(dialog).map(
+            |dialog_set| dialog_set.get(data).unwrap()
+        )
     }
 }
 

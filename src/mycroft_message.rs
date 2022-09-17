@@ -1,3 +1,4 @@
+use std::fmt;
 use serde_json::{Value};
 use tokio_tungstenite::tungstenite::protocol::Message;
 
@@ -16,6 +17,23 @@ pub struct MycroftMessage {
 	data: Value,
 	context: Value
 }
+
+impl From<MycroftMessage> for String {
+    fn from(message: MycroftMessage) -> Self {
+        message.to_string()
+    }
+}
+
+impl fmt::Display for MycroftMessage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{{\"type\":\"{}\",\"data\":{},\"context\":{}}}",
+               self.msg_type,
+               self.data,
+               self.context
+        )
+    }
+}
+
 
 impl MycroftMessage {
     #[allow(dead_code)]
@@ -47,19 +65,9 @@ impl MycroftMessage {
     }
     
     #[allow(dead_code)]
-    /// serialize to string
-    pub fn to_string(self) -> String {
-        format!("{{\"type\":\"{}\",\"data\":{},\"context\":{}}}",
-                self.msg_type,
-                self.data.to_string(),
-                self.context.to_string()
-        )
-    }
-
-    #[allow(dead_code)]
     /// Convert to tungstenite Message
     pub fn to_message(self) -> Message {
-        let string_repr = self.to_string();
-        Message::text(string_repr)
+        let string_rep: String = self.into();
+        Message::text(string_rep)
     }
 }

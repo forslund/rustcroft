@@ -66,16 +66,11 @@ impl Identity {
         get_identity()
     }
 
-    pub fn is_expired(self: &Self) -> bool {
-
-        if current_epoch() > self.expires_at {
-            true
-        } else {
-            false
-        }
+    pub fn is_expired(&self) -> bool {
+        current_epoch() > self.expires_at
     }
 
-    pub fn refresh(self: &mut Self) {
+    pub fn refresh(&mut self) {
         let refresh_token = &self.refresh;
         let client = reqwest::blocking::Client::new();
         let mut headers = HeaderMap::new();
@@ -94,7 +89,7 @@ impl Identity {
                 println!("New identity!");
                 println!("{:?}", identity);
                 self.update(identity);
-                write_identity_file(&self);
+                write_identity_file(self);
             },
             Err(e) => {
                 println!("{}", e);
@@ -102,7 +97,7 @@ impl Identity {
         };
     }
 
-    fn update(self: &mut Self, identity: IdentityServerResponse) {
+    fn update(&mut self, identity: IdentityServerResponse) {
         self.access = identity.access_token;
         self.refresh = identity.refresh_token;
         self.expires_at = current_epoch() + identity.expiration;
