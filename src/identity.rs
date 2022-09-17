@@ -44,7 +44,7 @@ pub fn get_identity() -> Option<Identity> {
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "camelCase")]
 pub struct IdentityServerResponse {
     pub uuid: String,
     pub access_token: String,
