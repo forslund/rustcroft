@@ -104,7 +104,7 @@ pub async fn start_skill(mut skill_setup: Skill) {
     let (bus_tx, bus_rx) = futures_channel::mpsc::unbounded();
 
     let url = Url::parse("ws://localhost:8181/core").unwrap();
-    let (ws_stream, _) = connect_async(url).await.expect("Failed to connect");
+    let (ws_stream, _) = connect_async(url.as_str()).await.expect("Failed to connect");
     println!("WebSocket handshake has been successfully completed");
 
     let (write, read) = ws_stream.split();
