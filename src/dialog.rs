@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use rand::Rng;
+use rand::seq::SliceRandom;
 use glob::glob;
 
 extern crate regex;
@@ -61,10 +61,7 @@ impl Dialog {
         if self.dialog_strings.is_empty() {
             Err("No dialogs")
         } else {
-            let index = rand::thread_rng().gen_range(
-                0..self.dialog_strings.len()
-            );
-            Ok(render(&self.dialog_strings[index], data)) //TODO: RANDOMIZE
+            Ok(render(&self.dialog_strings.choose(&mut rand::thread_rng()).unwrap(), data))
         }
     }
 }
