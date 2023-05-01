@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::PathBuf;
 use std::time::SystemTime;
+
+use log::{debug, error, info};
 use serde::{Deserialize, Serialize};
 
 extern crate xdg;
@@ -23,21 +25,21 @@ fn current_epoch() -> f32 {
 pub fn get_identity() -> Option<Identity> {
     let mut result = None;
     if let Some(identity_file) = find_identity_file() {
-        println!("identity file: {:?}", identity_file);
+        info!("identity file: {:?}", identity_file);
         if let Ok(json_string) = fs::read_to_string(identity_file) {
             let json_str = json_string.as_str();
-            println!("Content: {}", json_str);
+            debug!("Content: {}", json_str);
             
             match serde_json::from_str(json_str) {
                 Ok(identity) => {
                     let parsed: Identity = identity;
                     result = Some(parsed);
                 },
-                Err(e) => {println!("{}", e);}
+                Err(e) => {error!("{}", e);}
             };
         }
     } else {
-        println!("identity2 was not found");
+        error!("identity2.json was not found");
     }
     result 
 }
@@ -76,7 +78,7 @@ impl Identity {
         let mut headers = HeaderMap::new();
         let mut bearer_auth = String::from("Bearer ");
         bearer_auth.push_str(refresh_token);
-        println!("bearer_auth: {}", bearer_auth);
+        debug!("bearer_auth: {}", bearer_auth);
         headers.insert(AUTHORIZATION, HeaderValue::from_str(bearer_auth.as_str()).unwrap());
         headers.insert("Device", HeaderValue::from_str(self.uuid.as_str()).unwrap());
         let response = client.get("https://api.mycroft.ai/v1/auth/token")
@@ -86,13 +88,13 @@ impl Identity {
         match response.json::<IdentityServerResponse>() {
         //match response.text() {
             Ok(identity) => {
-                println!("New identity!");
-                println!("{:?}", identity);
+                debug!("New identity!");
+                debug!("{:?}", identity);
                 self.update(identity);
                 write_identity_file(self);
             },
             Err(e) => {
-                println!("{}", e);
+                error!("{}", e);
             }
         };
     }
@@ -110,6 +112,6 @@ fn write_identity_file(identity: &Identity) {
         let json_data = serde_json::to_string(&identity).unwrap();
         fs::write(identity_file, json_data).expect("Unable to write file");
     } else {
-        println!("Couldn't find identity file location");
+        error!("Couldn't find identity file location");
     }
 }

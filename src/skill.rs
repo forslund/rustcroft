@@ -2,7 +2,9 @@ use tokio_tungstenite::{connect_async};
 use url::Url;
 
 use std::collections::HashMap;
+
 use futures_channel::mpsc::UnboundedSender;
+use log::info;
 use tokio_tungstenite::tungstenite::protocol::Message;
 use serde::{Serialize, Deserialize};
 use serde_json::{Value};
@@ -105,7 +107,7 @@ pub async fn start_skill(mut skill_setup: Skill) {
 
     let url = Url::parse("ws://localhost:8181/core").unwrap();
     let (ws_stream, _) = connect_async(url.as_str()).await.expect("Failed to connect");
-    println!("WebSocket handshake has been successfully completed");
+    info!("WebSocket handshake has been successfully completed");
 
     let (write, read) = ws_stream.split();
     let write_to_ws = bus_rx.map(Ok).forward(write);

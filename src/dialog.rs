@@ -4,6 +4,7 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use rand::seq::SliceRandom;
 use glob::glob;
+use log::error;
 
 extern crate regex;
 
@@ -48,7 +49,7 @@ impl Dialog {
                         String::from(dialog_line.trim())
                     );
                 } else {
-                    println!("Couldn't parse line {:?}", line);
+                    error!("Couldn't parse line {:?}", line);
                 }
             }
         }
@@ -89,7 +90,7 @@ impl DialogCollection {
                     collection.dialogs.insert(key,
                                               Dialog::from_path(p));
                     },
-                Err(e) => println!("{:?}", e),
+                Err(e) => error!("{:?}", e),
             }
         }
         collection
@@ -117,6 +118,3 @@ macro_rules! dialog_data{
         }
     }
 }
-
-
-

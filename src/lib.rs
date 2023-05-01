@@ -11,3 +11,5 @@ mod test;
 pub use mycroft_message::MycroftMessage;
 pub use adapt_interface::{AdaptKeyword, AdaptIntent};
 pub use skill::{MsgHandler, EventHandler, start_skill};
+
+pub use log::{debug, error, info, warn};

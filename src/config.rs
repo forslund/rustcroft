@@ -3,6 +3,7 @@ use std::path::Path;
 use std::string::String;
 use std::io;
 
+use log::info;
 use serde_json::{Result, Value};
 
 extern crate xdg;
@@ -48,7 +49,7 @@ pub fn default_config_paths() -> Vec<String> {
     let xdg_dirs = xdg::BaseDirectories::with_prefix("mycroft").unwrap();
     let mut config_paths = Vec::<String>::new();
     for conf in xdg_dirs.find_config_files("mycroft.conf") {
-        println!("{}", conf.as_path().display());
+        info!("Applying config from {}", conf.as_path().display());
         let conf_string = conf.as_path().display().to_string();
         config_paths.push(conf_string);
     }
