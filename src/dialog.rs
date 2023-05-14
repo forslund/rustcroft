@@ -62,7 +62,7 @@ impl Dialog {
         if self.dialog_strings.is_empty() {
             Err("No dialogs")
         } else {
-            Ok(render(&self.dialog_strings.choose(&mut rand::thread_rng()).unwrap(), data))
+            Ok(render(self.dialog_strings.choose(&mut rand::thread_rng()).unwrap(), data))
         }
     }
 }
