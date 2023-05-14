@@ -41,9 +41,8 @@ impl EventHandler {
 
     #[allow(dead_code)]
     pub fn call(&self, name: &String, msg: serde_json::Value, bus_tx: &UnboundedSender<Message>) {
-        match self.handlers.get(name) {
-            Some(handler) => handler(msg, bus_tx),
-            None => ()
+        if let Some(handler) = self.handlers.get(name) {
+            handler(msg, bus_tx);
         }
     }
 
